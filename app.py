@@ -1,10 +1,11 @@
 print("\33c") # Clear the console
 from flask import * # Importing Flask
-import logging
+import databaseinterface
 
 app = Flask(__name__) # Initializing Flask app
 app.secret_key = "Yo Peace man!" # Setting the secret key for session management
 
+DATABASE = databaseinterface.Database("test.db", app.logger) # Initializing the database interface with the database file
 
 @app.route("/") # Defining the home url route
 def home():
