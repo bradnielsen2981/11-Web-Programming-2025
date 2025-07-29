@@ -24,12 +24,20 @@ def login():
         print("POST request received")
         email = request.form["email"]
         password = request.form["password"]
-        print(email, password)
-        if email == 'admin@admin' and password == 'password':
-            print("Login successful")
-            session['userid'] = 1
-            message = "Login successful! Welcome back."
-            return redirect("./") #. stops redirecting form data
+        results = DATABASE.ViewQuery("SELECT * FROM users WHERE email = ?", (email,))
+        if results:
+            user = results[0]
+            user_password = user['password']
+            if user_password == password:
+                print("Login successful")
+                session['userid'] = user['userid']
+                session['permission'] = user['permission']
+                message = "Login successful! Welcome back."
+                return redirect("./") #. stops redirecting form data
+            else:
+                message = "Incorrect password. Please try again."
+        else:
+            message = "Email not found. Please register or try again."
     return render_template("login.html", message=message)
 
 @app.route("/logout") # Defining the logout url route
@@ -43,7 +51,8 @@ def register():
 
 @app.route("/admin") # Admin
 def admin():
-    return "admin"
+    results = DATABASE.ViewQuery("SELECT * FROM users")
+    return jsonify(results)
 
 if __name__ == "__main__": # Running the app
     app.run(debug=True, port=5000)
