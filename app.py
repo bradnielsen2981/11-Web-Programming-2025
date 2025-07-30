@@ -45,7 +45,7 @@ def logout():
     session.clear()
     return redirect("/login")
 
-@app.route("/register", methods=["POST"]) # Register
+@app.route("/register", methods=["GET", "POST"]) # Register
 def register():
     message = "Please fill in the registration form."
     if request.method == "POST":
