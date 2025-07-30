@@ -45,9 +45,29 @@ def logout():
     session.clear()
     return redirect("/login")
 
-@app.route("/register") # Register
+@app.route("/register", methods=["POST"]) # Register
 def register():
-    return "Register"
+    message = "Please fill in the registration form."
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        password_confirm = request.form["passwordconfirm"]
+        firstname = request.form["firstname"]
+        lastname = request.form["lastname"]
+
+        if password != password_confirm:
+            message = "Passwords do not match."
+        else:
+            results = DATABASE.ViewQuery("SELECT * FROM users WHERE email = ?", (email,))
+            if results:
+                message = "Email already registered."
+            else:
+                DATABASE.ModifyQuery(
+                    "INSERT INTO users (email, password, firstname, lastname, permission) VALUES (?, ?, ?, ?, ?)",(email,password,firstname,lastname,"user"))
+                message = "Registration successful! You can now log in."
+                return redirect("./admin")
+
+    return render_template("register.html", message=message)
 
 @app.route("/admin") # Admin
 def admin():
