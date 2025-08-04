@@ -1,0 +1,21 @@
+<html>
+    <body>
+        <h2>Admin Dashboard</h2>
+        {% if results %}
+            <table border="1">
+                <tr>    
+                    {% for columnname in results[0].keys() %}
+                        <th>{{ columnname }}</th>
+                    {% endfor %}
+                </tr>
+                {% for row in results %}
+                    <tr>
+                        {% for value in row.values() %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </body>
+</html>

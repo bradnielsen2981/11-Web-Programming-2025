@@ -69,10 +69,16 @@ def register():
 
     return render_template("register.html", message=message)
 
+
 @app.route("/admin") # Admin
 def admin():
+
+    if 'permission' in session:
+        if session['permission'] != "admin":
+            return redirect("./")
+
     results = DATABASE.ViewQuery("SELECT * FROM users")
-    return jsonify(results)
+    return render_template("admin.html", results=results)
 
 if __name__ == "__main__": # Running the app
     app.run(debug=True, port=5000)
