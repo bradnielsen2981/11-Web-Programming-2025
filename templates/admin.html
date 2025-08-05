@@ -1,5 +1,5 @@
-<html>
-    <body>
+{% extends "layout.html" %}
+{% block content %}
         <h2>Admin Dashboard</h2>
         {% if results %}
             <table border="1">
@@ -17,5 +17,4 @@
                 {% endfor %}
             </table>
         {% endif %}
-    </body>
-</html>
+{% endblock %}

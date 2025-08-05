@@ -1,9 +1,8 @@
-<html>
-    <body>
-        <h1>Welcome to My Website</h1>
-        <p>This is a simple HTML template.</p>
+{% extends "layout.html" %}
+{% block content %}
+        <h1>Welcome to Rent a Butler</h1>
+        <p>Here you will view Butlers you can hire on a regular basis. Butlers have varying skills and rates. </p>
         <p>{{ message }}</p>
         <p>{{ session['userid'] }}</p>
         <a href="/logout">Log out</a>
-    </body>
-</html>
+{% endblock %}

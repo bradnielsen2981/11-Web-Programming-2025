@@ -1,5 +1,5 @@
-<html>
-<body>
+{% extends "layout.html" %}
+{% block content %}
 <h2>Register</h2>
 <form action="/register" method="POST">
   <label>Email:</label><br>
@@ -15,6 +15,5 @@
   <input type="submit" value="Submit">
 </form> 
 <p>{{ message }}</p>
-</body>
-</html>
+{% endblock %}
 
