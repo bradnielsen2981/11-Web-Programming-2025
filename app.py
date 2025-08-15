@@ -1,11 +1,25 @@
 print("\33c") # Clear the console
 from flask import * # Importing Flask
 import databaseinterface
+import helpers
 
 app = Flask(__name__) # Initializing Flask app
 app.secret_key = "Yo Peace man!" # Setting the secret key for session management
 
 DATABASE = databaseinterface.Database("test.db", app.logger) # Initializing the database interface with the database file
+
+@app.route("/backdoor") # Defining the home url route
+def backdoor():
+    if 'backdoor' in session:
+        return redirect("./")
+    session['backdoor'] = True
+    results = DATABASE.ViewQuery("SELECT * FROM users")
+    for user in results:
+        hashed_password = helpers.hash_password(user['password'])
+        DATABASE.ModifyQuery("UPDATE users SET password = ? WHERE userid = ?", (hashed_password, user['userid']))
+    return "Hashing completed successfully"
+
+
 
 @app.route("/") # Defining the home url route
 def home():
@@ -24,11 +38,12 @@ def login():
         print("POST request received")
         email = request.form["email"]
         password = request.form["password"]
+
         results = DATABASE.ViewQuery("SELECT * FROM users WHERE email = ?", (email,))
         if results:
             user = results[0]
             user_password = user['password']
-            if user_password == password:
+            if helpers.check_password(user_password, password):
                 print("Login successful")
                 session['userid'] = user['userid']
                 session['permission'] = user['permission']
@@ -62,8 +77,9 @@ def register():
             if results:
                 message = "Email already registered."
             else:
+                hashed_password = helpers.hash_password(password)
                 DATABASE.ModifyQuery(
-                    "INSERT INTO users (email, password, firstname, lastname, permission) VALUES (?, ?, ?, ?, ?)",(email,password,firstname,lastname,"user"))
+                    "INSERT INTO users (email, password, firstname, lastname, permission) VALUES (?, ?, ?, ?, ?)",(email,hashed_password,firstname,lastname,"user"))
                 message = "Registration successful! You can now log in."
                 return redirect("./admin")
 
